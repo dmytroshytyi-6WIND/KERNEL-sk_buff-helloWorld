@@ -41,7 +41,7 @@ static int __init helloLKM_init(void){
 	uint8_t dest_addr[ETH_ALEN];
 	struct net_device *enp0s3;
 	enp0s3 = dev_get_by_name(&init_net,"enp0s3");
-	memcpy (dest_addr, addr,ETH_ALEN);
+	memcpy(dest_addr, addr,ETH_ALEN);
 	proto = ETH_P_IP;
 	send_my(enp0s3,dest_addr,proto);
 	printk(KERN_INFO "Hello from the  LKM!\n" );
