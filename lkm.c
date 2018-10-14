@@ -40,11 +40,10 @@ static int __init helloLKM_init(void){
 	static char addr[ETH_ALEN] = {0xff,0xff,0xff,0xff,0xff,0xff};
 	uint8_t dest_addr[ETH_ALEN];
 	struct net_device *enp0s3;
-	int a;
 	enp0s3 = dev_get_by_name(&init_net,"enp0s3");
 	memcpy (dest_addr, addr,ETH_ALEN);
 	proto = ETH_P_IP;
-	a = send_my(enp0s3,dest_addr,proto);
+	send_my(enp0s3,dest_addr,proto);
 	printk(KERN_INFO "Hello from the  LKM!\n" );
    return 0;
 }
@@ -64,7 +63,7 @@ send_my(struct net_device* dev, uint8_t dest_addr[ETH_ALEN], uint16_t proto)
   int            ret;
   unsigned char* data;
   
- char *srcIP = "192.168.0.1";
+  char *srcIP = "192.168.0.1";
   char *dstIP = "192.168.0.2";
   char *hello_world = ">>> KERNEL sk_buff Hello World <<< by Dmytro Shytyi";
   int data_len = 51;
@@ -86,13 +85,13 @@ send_my(struct net_device* dev, uint8_t dest_addr[ETH_ALEN], uint16_t proto)
   data = skb_put(skb,udp_payload_len);
   memcpy(data, hello_world, data_len);
 /* UDP header */
-  struct udphdr* uh=(struct udphdr*)skb_push(skb,udp_header_len);
+  struct udphdr* uh = (struct udphdr*)skb_push(skb,udp_header_len);
   uh->len = htons(udp_total_len);
   uh->source = htons(15934);
   uh->dest = htons(15904);
 
 /* IP header */
-  struct iphdr* iph=(struct iphdr*)skb_push(skb,ip_header_len);
+  struct iphdr* iph = (struct iphdr*)skb_push(skb,ip_header_len);
   iph->ihl = ip_header_len/4;//4*5=20 ip_header_len
   iph->version = 4; // IPv4u
   iph->tos = 0; 
@@ -101,8 +100,8 @@ send_my(struct net_device* dev, uint8_t dest_addr[ETH_ALEN], uint16_t proto)
   iph->ttl = 64; // Set a TTL.
   iph->protocol = IPPROTO_UDP; //  protocol.
   iph->check = 0; 
-  iph->saddr=inet_addr(srcIP);
-  iph->daddr=inet_addr(dstIP);
+  iph->saddr = inet_addr(srcIP);
+  iph->daddr = inet_addr(dstIP);
 
   /*changing Mac address */
   struct ethhdr* eth = (struct ethhdr*)skb_push(skb, sizeof (struct ethhdr));//add data to the start of a buffer
